@@ -1,4 +1,5 @@
 using BasketAPI;
+using FluentAssertions;
 
 namespace TestBasketAPI;
 
@@ -23,7 +24,7 @@ public class TestShippingCosts
         actualPrice = _priceCalculator.GetShippingCosts(amountOfProducts);
 
         // Assert
-        Assert.Equal(expectedPrice, actualPrice);
+        actualPrice.Should().Be(expectedPrice);
     }
 
     [Theory]
@@ -41,7 +42,7 @@ public class TestShippingCosts
         actualPrice = _priceCalculator.GetShippingCosts(amountOfProducts);
 
         // Assert
-        Assert.Equal(expectedPrice, actualPrice);
+        actualPrice.Should().Be(expectedPrice);
     }
 
     [Theory]
@@ -57,7 +58,7 @@ public class TestShippingCosts
         // Act
         actualPrice = _priceCalculator.GetShippingCosts(amountOfProducts);
 
-        // Assert
-        Assert.Equal(expectedPrice, actualPrice);
+        // Assert        
+        actualPrice.Should().Be(expectedPrice);
     }
 }
