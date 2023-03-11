@@ -8,6 +8,21 @@ public class PriceCalculator
 
     public int GetShippingCosts(int amountOfProducts)
     {
-        throw new NotImplementedException();
+        if (amountOfProducts > 5)
+        {
+            return 750;
+        }
+        else if (amountOfProducts > 1)
+        {
+            return 500;
+        }
+        else if (amountOfProducts == 1)
+        {
+            return 250;
+        }
+        else
+        {
+            throw new InvalidDataException();
+        }
     }
 }
