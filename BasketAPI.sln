@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketAPI", "BasketAPI\BasketAPI.csproj", "{D6EB0E5B-3839-4E60-B7F7-815DDC37C423}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBasketAPI", "TestBasketAPI\TestBasketAPI.csproj", "{5F64394A-4795-4155-8B4F-76DA134EDA4B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6EB0E5B-3839-4E60-B7F7-815DDC37C423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6EB0E5B-3839-4E60-B7F7-815DDC37C423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6EB0E5B-3839-4E60-B7F7-815DDC37C423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6EB0E5B-3839-4E60-B7F7-815DDC37C423}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F64394A-4795-4155-8B4F-76DA134EDA4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F64394A-4795-4155-8B4F-76DA134EDA4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F64394A-4795-4155-8B4F-76DA134EDA4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F64394A-4795-4155-8B4F-76DA134EDA4B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
