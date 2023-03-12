@@ -10,15 +10,15 @@ public class PriceCalculator
     {
         if (amountOfProducts > 5)
         {
-            return 750;
+            return _highShippingPrice;
         }
         else if (amountOfProducts > 1)
         {
-            return 500;
+            return _mediumShippingPrice;
         }
         else if (amountOfProducts == 1)
         {
-            return 250;
+            return _lowShippingPrice;
         }
         else
         {

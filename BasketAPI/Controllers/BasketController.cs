@@ -1,5 +1,7 @@
 using System.Collections;
 using Microsoft.AspNetCore.Mvc;
+using BasketAPI.Models;
+using BasketAPI.Data;
 
 namespace BasketAPI.Controllers;
 
@@ -7,22 +9,57 @@ namespace BasketAPI.Controllers;
 [Route("[controller]")]
 public class BasketController : ControllerBase
 {
-    private readonly ILogger<BasketController> _logger;
-    public BasketController(ILogger<BasketController> logger)
+    private BasketContext _dbContext;
+    private ProductValidator _validator;
+
+    public BasketController(BasketContext dbContext)
     {
-        _logger = logger;
+        _dbContext = dbContext;
+        _validator = new ProductValidator();
     }
 
-    /// <summary>  
-    /// Create a Product  
-    /// </summary>
-    /// <remarks>  
-    /// Create a product into Databse  
-    /// </remarks>  
-    /// <returns></returns>  
-    [HttpGet(Name = "basket/{sessionId}")]
-    public IEnumerable<Basket> Get(string sessionId)
+    [HttpGet]
+    public IActionResult GetAll()
     {
-        return null;
+        var baskets = _dbContext.Baskets.ToList();
+        return Ok(baskets);
+    }
+
+    /// <summary>
+    /// Get basket from sessionId
+    /// </summary>
+    /// <param name="sessionId"></param>
+    /// <returns></returns>
+    [HttpGet("{sessionId}")]
+    public IActionResult GetById(string sessionId)
+    {
+        var basket = _dbContext.Baskets.ToList();
+        return Ok(basket);
+    }
+
+    /// <summary>
+    /// Add item to basket, create new if doesnt exist
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut("{sessionId}/items")]
+    public IActionResult Put(string sessionId, BasketItem item)
+    {
+
+        var basket = _dbContext.Baskets.Where(b => b.SessionId == sessionId);
+        if (basket != null)
+        {
+
+        }
+        else
+        {
+
+        }
+        return Ok();
+    }
+
+    [HttpDelete("{sessionId}/{basketItemId}")]
+    public IActionResult Delete(string sessionId, int basketItemId)
+    {
+        return Ok();
     }
 }

@@ -1,3 +1,5 @@
+using BasketAPI.Models;
+
 namespace BasketAPI;
 
 public class ProductValidator
@@ -17,5 +19,14 @@ public class ProductValidator
         new Product { ProductId = 460865, Name = "Amplified - Rolling Stones T-shirt", Price = 2999 }
     };
 
+    public bool IsValid(Product product)
+    {
+        Product validProduct = _store.Find(p => p.ProductId == product.ProductId);
+        if (validProduct != null)
+        {
+            return validProduct.Name == product.Name && validProduct.Price == product.Price;
+        }
 
+        return false;
+    }
 }
