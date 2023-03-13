@@ -63,12 +63,10 @@ public class BasketController : ControllerBase
 
                 int totalProducts = 0;
                 int totalPrice = 0;
-                Console.WriteLine($"Price is now {totalPrice}");
                 basket.Items.ForEach(basketItem =>
                 {
                     totalProducts += basketItem.NumberOfProducts;
                     totalPrice += basketItem.TotalPrice;
-                    Console.WriteLine($"Price is now {totalPrice}");
                 });
 
                 basket.ShippingCosts = _priceCalculator.GetShippingCosts(totalProducts);
