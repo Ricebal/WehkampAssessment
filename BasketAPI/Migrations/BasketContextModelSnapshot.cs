@@ -77,10 +77,7 @@ namespace BasketAPI.Migrations
             modelBuilder.Entity("BasketAPI.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BasketAPI.Migrations
 {
     [DbContext(typeof(BasketContext))]
-    [Migration("20230312140353_CreateInitial")]
-    partial class CreateInitial
+    [Migration("20230313131308_InitialMig")]
+    partial class InitialMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,10 +80,7 @@ namespace BasketAPI.Migrations
             modelBuilder.Entity("BasketAPI.Models.Product", b =>
                 {
                     b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -1,4 +1,5 @@
 using BasketAPI.Models;
+using BasketAPI.Data;
 
 namespace BasketAPI;
 
@@ -18,6 +19,12 @@ public class ProductValidator
         new Product { ProductId = 858445, Name = "Red Dead Redemption 2 (PS4)", Price = 5999 },
         new Product { ProductId = 460865, Name = "Amplified - Rolling Stones T-shirt", Price = 2999 }
     };
+
+    public void PopulateDB(BasketContext dbContext)
+    {
+        dbContext.AddRange(_store);
+        dbContext.SaveChanges();
+    }
 
     public bool IsValid(Product product)
     {

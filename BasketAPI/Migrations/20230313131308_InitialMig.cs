@@ -5,7 +5,7 @@
 namespace BasketAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateInitial : Migration
+    public partial class InitialMig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,8 +29,7 @@ namespace BasketAPI.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false)
                 },
@@ -45,9 +44,9 @@ namespace BasketAPI.Migrations
                 {
                     BasketItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
                     Size = table.Column<int>(type: "int", nullable: true),
                     NumberOfProducts = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     BasketId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
