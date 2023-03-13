@@ -5,7 +5,7 @@
 namespace BasketAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMig : Migration
+    public partial class CreateInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,61 +14,62 @@ namespace BasketAPI.Migrations
                 name: "Baskets",
                 columns: table => new
                 {
-                    BasketId = table.Column<int>(type: "int", nullable: false)
+                    basket_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShippingCosts = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<int>(type: "int", nullable: false)
+                    session_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    shipping_costs = table.Column<int>(type: "int", nullable: false),
+                    total_price = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Baskets", x => x.BasketId);
+                    table.PrimaryKey("PK_Baskets", x => x.basket_id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    price = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.ProductId);
+                    table.PrimaryKey("PK_Products", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "BasketItems",
                 columns: table => new
                 {
-                    BasketItemId = table.Column<int>(type: "int", nullable: false)
+                    basket_item_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Size = table.Column<int>(type: "int", nullable: true),
-                    NumberOfProducts = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    BasketId = table.Column<int>(type: "int", nullable: true)
+                    size = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    number_of_products = table.Column<int>(type: "int", nullable: false),
+                    basket_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BasketItems", x => x.BasketItemId);
+                    table.PrimaryKey("PK_BasketItems", x => x.basket_item_id);
                     table.ForeignKey(
-                        name: "FK_BasketItems_Baskets_BasketId",
-                        column: x => x.BasketId,
+                        name: "FK_BasketItems_Baskets_basket_id",
+                        column: x => x.basket_id,
                         principalTable: "Baskets",
-                        principalColumn: "BasketId");
+                        principalColumn: "basket_id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BasketItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "ProductId",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BasketItems_BasketId",
+                name: "IX_BasketItems_basket_id",
                 table: "BasketItems",
-                column: "BasketId");
+                column: "basket_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BasketItems_ProductId",

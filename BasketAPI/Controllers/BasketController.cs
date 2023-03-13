@@ -41,13 +41,13 @@ public class BasketController : ControllerBase
     }
 
     /// <summary>
-    /// Get basket from sessionId
+    /// Get basket from session ID
     /// </summary>
     /// <returns>A signle basket based on ID provided</returns>
-    [HttpGet("{sessionId}")]
-    public IActionResult GetById(string sessionId)
+    [HttpGet("{session_id}")]
+    public IActionResult GetById(string session_id)
     {
-        var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == sessionId).FirstOrDefault();
+        var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == session_id).FirstOrDefault();
         if (basket != null)
         {
             return Ok(basket);
@@ -60,13 +60,13 @@ public class BasketController : ControllerBase
     /// Add item to basket, create a new one if there isn't a basket with the session ID
     /// </summary>
     /// <returns>The basket that the item was added to</returns>
-    [HttpPut("{sessionId}/items")]
-    public IActionResult Put(string sessionId, [FromBody] BasketItemForPutDto item)
+    [HttpPut("{session_id}/items")]
+    public IActionResult Put(string session_id, [FromBody] BasketItemForPutDto item)
     {
         var product = _dbContext.Products.Where(p => p.ProductId == item.ProductId).FirstOrDefault();
         if (product != null && _productValidator.IsValid(product))
         {
-            var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == sessionId).FirstOrDefault();
+            var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == session_id).FirstOrDefault();
             if (basket != null)
             {
                 basket.Items.Add(new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product });
@@ -74,25 +74,44 @@ public class BasketController : ControllerBase
                 basket = _priceCalculator.SetPrices(basket);
 
                 _dbContext.SaveChanges();
-                return GetById(basket.SessionId);
+                return Ok(basket);
             }
             else
             {
-                Basket newBasket = new Basket { SessionId = sessionId, Items = new List<BasketItem> { new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product } } };
+                Basket newBasket = new Basket { SessionId = session_id, Items = new List<BasketItem> { new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product } } };
                 newBasket = _priceCalculator.SetPrices(newBasket);
 
                 _dbContext.Add(newBasket);
                 _dbContext.SaveChanges();
-                return GetById(newBasket.SessionId);
+                return Ok(newBasket);
             }
         }
 
         return BadRequest();
     }
 
-    [HttpDelete("{sessionId}/{basketItemId}")]
-    public IActionResult Delete(string sessionId, int basketItemId)
+    /// <summary>
+    /// Remove an item from a basket using session and basket item id
+    /// </summary>
+    /// <returns>The basket that the item was removed from</returns>
+    [HttpDelete("{session_id}/{basket_item_id:int}")]
+    public IActionResult Delete(string session_id, int basket_item_id)
     {
-        return Ok();
+        var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == session_id).FirstOrDefault();
+        if (basket != null)
+        {
+            BasketItem itemToRemove = basket.Items.Find(basketItem => basketItem.BasketItemId == basket_item_id);
+            if (itemToRemove != null)
+            {
+                basket.Items.Remove(itemToRemove);
+                basket = _priceCalculator.SetPrices(basket);
+
+                _dbContext.SaveChanges();
+                return Ok(basket);
+            }
+            return NotFound(basket);
+        }
+
+        return BadRequest();
     }
 }
