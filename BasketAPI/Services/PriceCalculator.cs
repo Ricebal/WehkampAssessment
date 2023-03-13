@@ -1,3 +1,5 @@
+using BasketAPI.Models;
+
 namespace BasketAPI;
 
 public class PriceCalculator
@@ -24,5 +26,20 @@ public class PriceCalculator
         {
             throw new InvalidDataException();
         }
+    }
+
+    public Basket SetPrices(Basket basket)
+    {
+        int totalProducts = 0;
+        int totalPrice = 0;
+        basket.Items.ForEach(basketItem =>
+        {
+            totalProducts += basketItem.NumberOfProducts;
+            totalPrice += basketItem.TotalPrice;
+        });
+
+        basket.ShippingCosts = GetShippingCosts(totalProducts);
+        basket.TotalPrice = basket.ShippingCosts + totalPrice;
+        return basket;
     }
 }

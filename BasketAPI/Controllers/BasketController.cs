@@ -32,7 +32,7 @@ public class BasketController : ControllerBase
     /// <summary>
     /// Get all baskets
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Every basket that exists</returns>
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -43,7 +43,7 @@ public class BasketController : ControllerBase
     /// <summary>
     /// Get basket from sessionId
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A signle basket based on ID provided</returns>
     [HttpGet("{sessionId}")]
     public IActionResult GetById(string sessionId)
     {
@@ -57,9 +57,9 @@ public class BasketController : ControllerBase
     }
 
     /// <summary>
-    /// Add item to basket, create new if doesnt exist
+    /// Add item to basket, create a new one if there isn't a basket with the session ID
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The basket that the item was added to</returns>
     [HttpPut("{sessionId}/items")]
     public IActionResult Put(string sessionId, [FromBody] BasketItemForPutDto item)
     {
@@ -71,16 +71,7 @@ public class BasketController : ControllerBase
             {
                 basket.Items.Add(new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product });
 
-                int totalProducts = 0;
-                int totalPrice = 0;
-                basket.Items.ForEach(basketItem =>
-                {
-                    totalProducts += basketItem.NumberOfProducts;
-                    totalPrice += basketItem.TotalPrice;
-                });
-
-                basket.ShippingCosts = _priceCalculator.GetShippingCosts(totalProducts);
-                basket.TotalPrice = basket.ShippingCosts + totalPrice;
+                basket = _priceCalculator.SetPrices(basket);
 
                 _dbContext.SaveChanges();
                 return GetById(basket.SessionId);
@@ -88,8 +79,7 @@ public class BasketController : ControllerBase
             else
             {
                 Basket newBasket = new Basket { SessionId = sessionId, Items = new List<BasketItem> { new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product } } };
-                newBasket.ShippingCosts = _priceCalculator.GetShippingCosts(item.NumberOfProducts);
-                newBasket.TotalPrice = newBasket.ShippingCosts + (product.Price * item.NumberOfProducts);
+                newBasket = _priceCalculator.SetPrices(newBasket);
 
                 _dbContext.Add(newBasket);
                 _dbContext.SaveChanges();
