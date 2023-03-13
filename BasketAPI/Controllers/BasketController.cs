@@ -61,33 +61,29 @@ public class BasketController : ControllerBase
     /// </summary>
     /// <returns>The basket that the item was added to</returns>
     [HttpPut("{session_id}/items")]
-    public IActionResult Put(string session_id, [FromBody] BasketItemForPutDto item)
+    public IActionResult Put(string session_id, [FromBody] List<BasketItemForPutDto> items)
     {
-        var product = _dbContext.Products.Where(p => p.ProductId == item.ProductId).FirstOrDefault();
-        if (product != null && _productValidator.IsValid(product))
+        var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == session_id).FirstOrDefault();
+        if (basket == null)
         {
-            var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == session_id).FirstOrDefault();
-            if (basket != null)
-            {
-                basket.Items.Add(new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product });
-
-                basket = _priceCalculator.SetPrices(basket);
-
-                _dbContext.SaveChanges();
-                return Ok(basket);
-            }
-            else
-            {
-                Basket newBasket = new Basket { SessionId = session_id, Items = new List<BasketItem> { new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product } } };
-                newBasket = _priceCalculator.SetPrices(newBasket);
-
-                _dbContext.Add(newBasket);
-                _dbContext.SaveChanges();
-                return Ok(newBasket);
-            }
+            basket = new Basket { SessionId = session_id, Items = new List<BasketItem>() };
+            _dbContext.Add(basket);
         }
+        List<int> itemIds = new List<int>();
+        items.ForEach(item =>
+        {
+            var product = _dbContext.Products.Where(p => p.ProductId == item.ProductId).FirstOrDefault();
+            if (product != null && _productValidator.IsValid(product))
+            {
+                BasketItem itemToAdd = new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product };
+                itemIds.Add(itemToAdd.BasketItemId);
+                basket.Items.Add(itemToAdd);
+            }
+        });
+        basket = _priceCalculator.SetPrices(basket);
 
-        return BadRequest();
+        _dbContext.SaveChanges();
+        return Ok(itemIds);
     }
 
     /// <summary>
