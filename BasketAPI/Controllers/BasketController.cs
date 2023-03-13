@@ -69,21 +69,22 @@ public class BasketController : ControllerBase
             basket = new Basket { SessionId = session_id, Items = new List<BasketItem>() };
             _dbContext.Add(basket);
         }
-        List<BasketItem> addedItems = new List<BasketItem>();
+        List<BasketItem> itemsToAdd = new List<BasketItem>();
         items.ForEach(item =>
         {
             var product = _dbContext.Products.Where(p => p.ProductId == item.ProductId).FirstOrDefault();
             if (product != null && _productValidator.IsValid(product))
             {
                 BasketItem itemToAdd = new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product };
-                addedItems.Add(itemToAdd);
-                basket.Items.Add(itemToAdd);
+                itemsToAdd.Add(itemToAdd);
             }
         });
+
+        basket.Items.AddRange(itemsToAdd);
         basket = _priceCalculator.SetPrices(basket);
         List<int> addedIds = new List<int>();
         _dbContext.SaveChanges();
-        addedIds.AddRange(addedItems.Select(item => item.BasketItemId));
+        addedIds.AddRange(itemsToAdd.Select(item => item.BasketItemId));
         return Ok(addedIds);
     }
 
