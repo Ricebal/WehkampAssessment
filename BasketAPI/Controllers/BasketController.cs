@@ -1,4 +1,3 @@
-using System.Collections;
 using Microsoft.AspNetCore.Mvc;
 using BasketAPI.Models;
 using BasketAPI.Data;
@@ -20,7 +19,7 @@ public class BasketController : ControllerBase
         _dbContext = dbContext;
         _productValidator = new ProductValidator();
 
-        // For testing purposes
+        // For testing purposes, populate the database with products if it's empty
         if (_dbContext.Products.ToList().Count < 1)
         {
             _productValidator.PopulateDB(dbContext);
@@ -59,7 +58,7 @@ public class BasketController : ControllerBase
     /// <summary>
     /// Add item to basket, create a new one if there isn't a basket with the session ID
     /// </summary>
-    /// <returns>The basket that the item was added to</returns>
+    /// <returns>Array of the added basket item IDs</returns>
     [HttpPut("{session_id}/items")]
     public IActionResult Put(string session_id, [FromBody] List<BasketItemForPutDto> items)
     {
