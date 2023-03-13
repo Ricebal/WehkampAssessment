@@ -61,6 +61,19 @@ public class BasketController : ControllerBase
             {
                 basket.Items.Add(new BasketItem { Size = size, NumberOfProducts = numberOfProducts, Product = product });
 
+                int totalProducts = 0;
+                int totalPrice = 0;
+                Console.WriteLine($"Price is now {totalPrice}");
+                basket.Items.ForEach(basketItem =>
+                {
+                    totalProducts += basketItem.NumberOfProducts;
+                    totalPrice += basketItem.TotalPrice;
+                    Console.WriteLine($"Price is now {totalPrice}");
+                });
+
+                basket.ShippingCosts = _priceCalculator.GetShippingCosts(totalProducts);
+                basket.TotalPrice = basket.ShippingCosts + totalPrice;
+
                 _dbContext.SaveChanges();
                 return GetById(basket.SessionId);
             }
