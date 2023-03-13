@@ -2,6 +2,7 @@ using System.Collections;
 using Microsoft.AspNetCore.Mvc;
 using BasketAPI.Models;
 using BasketAPI.Data;
+using BasketAPI.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace BasketAPI.Controllers;
@@ -18,10 +19,20 @@ public class BasketController : ControllerBase
     {
         _dbContext = dbContext;
         _productValidator = new ProductValidator();
-        // _productValidator.PopulateDB(dbContext);
+
+        // For testing purposes
+        if (_dbContext.Products.ToList().Count < 1)
+        {
+            _productValidator.PopulateDB(dbContext);
+        }
+
         _priceCalculator = new PriceCalculator();
     }
 
+    /// <summary>
+    /// Get all baskets
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -32,7 +43,6 @@ public class BasketController : ControllerBase
     /// <summary>
     /// Get basket from sessionId
     /// </summary>
-    /// <param name="sessionId"></param>
     /// <returns></returns>
     [HttpGet("{sessionId}")]
     public IActionResult GetById(string sessionId)
@@ -51,15 +61,15 @@ public class BasketController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPut("{sessionId}/items")]
-    public IActionResult Put(string sessionId, int productId, int numberOfProducts, int? size)
+    public IActionResult Put(string sessionId, [FromBody] BasketItemForPutDto item)
     {
-        var product = _dbContext.Products.Where(p => p.ProductId == productId).FirstOrDefault();
+        var product = _dbContext.Products.Where(p => p.ProductId == item.ProductId).FirstOrDefault();
         if (product != null && _productValidator.IsValid(product))
         {
             var basket = _dbContext.Baskets.Include(b => b.Items).ThenInclude(i => i.Product).Where(b => b.SessionId == sessionId).FirstOrDefault();
             if (basket != null)
             {
-                basket.Items.Add(new BasketItem { Size = size, NumberOfProducts = numberOfProducts, Product = product });
+                basket.Items.Add(new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product });
 
                 int totalProducts = 0;
                 int totalPrice = 0;
@@ -77,9 +87,9 @@ public class BasketController : ControllerBase
             }
             else
             {
-                Basket newBasket = new Basket { SessionId = sessionId, Items = new List<BasketItem> { new BasketItem { Size = size, NumberOfProducts = numberOfProducts, Product = product } } };
-                newBasket.ShippingCosts = _priceCalculator.GetShippingCosts(numberOfProducts);
-                newBasket.TotalPrice = newBasket.ShippingCosts + (product.Price * numberOfProducts);
+                Basket newBasket = new Basket { SessionId = sessionId, Items = new List<BasketItem> { new BasketItem { Size = item.Size, NumberOfProducts = item.NumberOfProducts, Product = product } } };
+                newBasket.ShippingCosts = _priceCalculator.GetShippingCosts(item.NumberOfProducts);
+                newBasket.TotalPrice = newBasket.ShippingCosts + (product.Price * item.NumberOfProducts);
 
                 _dbContext.Add(newBasket);
                 _dbContext.SaveChanges();
